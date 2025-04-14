@@ -9,6 +9,7 @@ class _SearchField<T> extends StatefulWidget {
   final Duration? futureRequestDelay;
   final ValueChanged<bool>? onFutureRequestLoading, mayFoundResult;
   final SearchFieldDecoration? decoration;
+  final void Function(String) onSearchTextChange;
 
   const _SearchField.forListData({
     super.key,
@@ -16,7 +17,9 @@ class _SearchField<T> extends StatefulWidget {
     required this.onSearchedItems,
     required this.searchHintText,
     required this.decoration,
-  })  : searchType = _SearchType.onListData,
+    required this.onSearchTextChange,
+  })
+      : searchType = _SearchType.onListData,
         futureRequest = null,
         futureRequestDelay = null,
         onFutureRequestLoading = null,
@@ -32,6 +35,7 @@ class _SearchField<T> extends StatefulWidget {
     required this.onFutureRequestLoading,
     required this.mayFoundResult,
     required this.decoration,
+    required this.onSearchTextChange,
   }) : searchType = _SearchType.onRequestData;
 
   @override
@@ -62,7 +66,7 @@ class _SearchFieldState<T> extends State<_SearchField<T>> {
 
   void onSearch(String query) {
     final result = widget.items.where(
-      (item) {
+          (item) {
         if (item is CustomDropdownListFilter) {
           return item.filter(query);
         } else {
@@ -104,6 +108,7 @@ class _SearchFieldState<T> extends State<_SearchField<T>> {
         focusNode: focusNode,
         style: widget.decoration?.textStyle,
         onChanged: (val) async {
+          widget.onSearchTextChange(val);
           if (val.isEmpty) {
             isFieldEmpty = true;
           } else if (isFieldEmpty) {
@@ -119,8 +124,8 @@ class _SearchFieldState<T> extends State<_SearchField<T>> {
               _delayTimer?.cancel();
               _delayTimer =
                   Timer(widget.futureRequestDelay ?? Duration.zero, () {
-                searchRequest(val);
-              });
+                    searchRequest(val);
+                  });
             } else {
               searchRequest(val);
             }
@@ -138,7 +143,7 @@ class _SearchFieldState<T> extends State<_SearchField<T>> {
           constraints: widget.decoration?.constraints ??
               const BoxConstraints.tightFor(height: 40),
           contentPadding:
-              widget.decoration?.contentPadding ?? const EdgeInsets.all(8),
+          widget.decoration?.contentPadding ?? const EdgeInsets.all(8),
           hintText: widget.searchHintText,
           hintStyle: widget.decoration?.hintStyle,
           prefixIcon: widget.decoration?.prefixIcon ??

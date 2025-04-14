@@ -7,10 +7,10 @@ const _defaultOverlayIconUp = Icon(
 
 const _defaultHeaderPadding = EdgeInsets.all(16.0);
 const _overlayOuterPadding =
-    EdgeInsetsDirectional.only(bottom: 12, start: 12, end: 12);
+EdgeInsetsDirectional.only(bottom: 12, start: 12, end: 12);
 const _defaultOverlayShadowOffset = Offset(0, 6);
 const _defaultListItemPadding =
-    EdgeInsets.symmetric(vertical: 12, horizontal: 16);
+EdgeInsets.symmetric(vertical: 12, horizontal: 16);
 
 class _DropdownOverlay<T> extends StatefulWidget {
   final List<T> items;
@@ -38,6 +38,7 @@ class _DropdownOverlay<T> extends StatefulWidget {
   final _NoResultFoundBuilder? noResultFoundBuilder;
   final CustomDropdownDecoration? decoration;
   final _DropdownType dropdownType;
+  final void Function(String) onSearchTextChange;
 
   const _DropdownOverlay({
     Key? key,
@@ -75,6 +76,7 @@ class _DropdownOverlay<T> extends StatefulWidget {
     required this.listItemBuilder,
     required this.headerListBuilder,
     required this.noResultFoundBuilder,
+    required this.onSearchTextChange,
   });
 
   @override
@@ -82,14 +84,16 @@ class _DropdownOverlay<T> extends StatefulWidget {
 }
 
 class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
-  bool displayOverly = true, displayOverlayBottom = true;
+  bool displayOverly = true,
+      displayOverlayBottom = true;
   bool isSearchRequestLoading = false;
   bool? mayFoundSearchRequestResult;
   late List<T> items;
   late T? selectedItem;
   late List<T> selectedItems;
   late ScrollController scrollController;
-  final key1 = GlobalKey(), key2 = GlobalKey();
+  final key1 = GlobalKey(),
+      key2 = GlobalKey();
 
   Widget hintBuilder(BuildContext context) {
     return widget.hintBuilder != null
@@ -115,12 +119,10 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
         : defaultNoResultFoundBuilder(context, widget.noResultFoundText);
   }
 
-  Widget defaultListItemBuilder(
-    BuildContext context,
-    T result,
-    bool isSelected,
-    VoidCallback onItemSelect,
-  ) {
+  Widget defaultListItemBuilder(BuildContext context,
+      T result,
+      bool isSelected,
+      VoidCallback onItemSelect,) {
     return Row(
       children: [
         Expanded(
@@ -138,7 +140,7 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
               onChanged: (_) => onItemSelect(),
               value: isSelected,
               activeColor:
-                  widget.decoration?.listItemDecoration?.selectedIconColor,
+              widget.decoration?.listItemDecoration?.selectedIconColor,
               side: widget.decoration?.listItemDecoration?.selectedIconBorder,
               shape: widget.decoration?.listItemDecoration?.selectedIconShape,
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -197,8 +199,13 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final render1 = key1.currentContext?.findRenderObject() as RenderBox;
       final render2 = key2.currentContext?.findRenderObject() as RenderBox;
-      final screenHeight = MediaQuery.of(context).size.height;
-      double y = render1.localToGlobal(Offset.zero).dy;
+      final screenHeight = MediaQuery
+          .of(context)
+          .size
+          .height;
+      double y = render1
+          .localToGlobal(Offset.zero)
+          .dy;
       if (screenHeight - y < render2.size.height) {
         displayOverlayBottom = false;
         setState(() {});
@@ -264,28 +271,28 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
 
     // list padding
     final listPadding =
-        onSearch ? const EdgeInsets.only(top: 8) : EdgeInsets.zero;
+    onSearch ? const EdgeInsets.only(top: 8) : EdgeInsets.zero;
 
     // items list
     final list = items.isNotEmpty
         ? _ItemsList<T>(
-            scrollController: scrollController,
-            listItemBuilder: widget.listItemBuilder ?? defaultListItemBuilder,
-            excludeSelected: items.length > 1 ? widget.excludeSelected : false,
-            selectedItem: selectedItem,
-            selectedItems: selectedItems,
-            items: items,
-            itemsListPadding: widget.itemsListPadding ?? listPadding,
-            listItemPadding: widget.listItemPadding ?? _defaultListItemPadding,
-            onItemSelect: onItemSelect,
-            decoration: decoration?.listItemDecoration,
-            dropdownType: widget.dropdownType,
-          )
+      scrollController: scrollController,
+      listItemBuilder: widget.listItemBuilder ?? defaultListItemBuilder,
+      excludeSelected: items.length > 1 ? widget.excludeSelected : false,
+      selectedItem: selectedItem,
+      selectedItems: selectedItems,
+      items: items,
+      itemsListPadding: widget.itemsListPadding ?? listPadding,
+      listItemPadding: widget.listItemPadding ?? _defaultListItemPadding,
+      onItemSelect: onItemSelect,
+      decoration: decoration?.listItemDecoration,
+      dropdownType: widget.dropdownType,
+    )
         : (mayFoundSearchRequestResult != null &&
-                    !mayFoundSearchRequestResult!) ||
-                widget.searchType == _SearchType.onListData
-            ? noResultFoundBuilder(context)
-            : const SizedBox(height: 12);
+        !mayFoundSearchRequestResult!) ||
+        widget.searchType == _SearchType.onListData
+        ? noResultFoundBuilder(context)
+        : const SizedBox(height: 12);
 
     final child = Stack(
       children: [
@@ -294,7 +301,7 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
           child: CompositedTransformFollower(
             link: widget.layerLink,
             followerAnchor:
-                displayOverlayBottom ? Alignment.topLeft : Alignment.bottomLeft,
+            displayOverlayBottom ? Alignment.topLeft : Alignment.bottomLeft,
             showWhenUnlinked: false,
             offset: overlayOffset,
             child: Container(
@@ -305,7 +312,7 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
                     CustomDropdownDecoration._defaultFillColor,
                 border: decoration?.expandedBorder,
                 borderRadius:
-                    decoration?.expandedBorderRadius ?? _defaultBorderRadius,
+                decoration?.expandedBorderRadius ?? _defaultBorderRadius,
                 boxShadow: decoration?.expandedShadow ??
                     [
                       BoxShadow(
@@ -330,7 +337,7 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
                       borderRadius: decoration?.expandedBorderRadius ??
                           _defaultBorderRadius,
                       child:
-                          NotificationListener<OverscrollIndicatorNotification>(
+                      NotificationListener<OverscrollIndicatorNotification>(
                         onNotification: (notification) {
                           notification.disallowIndicator();
                           return true;
@@ -338,7 +345,7 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
                         child: Theme(
                           data: Theme.of(context).copyWith(
                             scrollbarTheme: decoration
-                                    ?.overlayScrollbarDecoration ??
+                                ?.overlayScrollbarDecoration ??
                                 ScrollbarThemeData(
                                   thumbVisibility: MaterialStateProperty.all(
                                     true,
@@ -373,13 +380,13 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
                                         Expanded(
                                           child: switch (widget.dropdownType) {
                                             _DropdownType.singleSelect =>
-                                              selectedItem != null
-                                                  ? headerBuilder(context)
-                                                  : hintBuilder(context),
+                                            selectedItem != null
+                                                ? headerBuilder(context)
+                                                : hintBuilder(context),
                                             _DropdownType.multipleSelect =>
-                                              selectedItems.isNotEmpty
-                                                  ? headerListBuilder(context)
-                                                  : hintBuilder(context),
+                                            selectedItems.isNotEmpty
+                                                ? headerListBuilder(context)
+                                                : hintBuilder(context),
                                           },
                                         ),
                                         const SizedBox(width: 12),
@@ -398,8 +405,9 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
                                     onSearchedItems: (val) {
                                       setState(() => items = val);
                                     },
+                                    onSearchTextChange: widget.onSearchTextChange,
                                     decoration:
-                                        decoration?.searchFieldDecoration,
+                                    decoration?.searchFieldDecoration,
                                   )
                                 else
                                   GestureDetector(
@@ -423,10 +431,11 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
                                             child: _SearchField<T>.forListData(
                                               items: widget.items,
                                               searchHintText:
-                                                  widget.searchHintText,
+                                              widget.searchHintText,
                                               onSearchedItems: (val) {
                                                 setState(() => items = val);
                                               },
+                                              onSearchTextChange: widget.onSearchTextChange,
                                               decoration: decoration
                                                   ?.searchFieldDecoration,
                                             ),
@@ -438,79 +447,82 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
                                       ),
                                     ),
                                   )
-                              else if (onSearch &&
-                                  widget.searchType ==
-                                      _SearchType.onRequestData)
-                                if (!widget.hideSelectedFieldWhenOpen)
-                                  _SearchField<T>.forRequestData(
-                                    items: widget.items,
-                                    searchHintText: widget.searchHintText,
-                                    onFutureRequestLoading: (val) {
-                                      setState(() {
-                                        isSearchRequestLoading = val;
-                                      });
-                                    },
-                                    futureRequest: widget.futureRequest,
-                                    futureRequestDelay:
-                                        widget.futureRequestDelay,
-                                    onSearchedItems: (val) {
-                                      setState(() => items = val);
-                                    },
-                                    mayFoundResult: (val) =>
-                                        mayFoundSearchRequestResult = val,
-                                    decoration:
-                                        decoration?.searchFieldDecoration,
-                                  )
-                                else
-                                  GestureDetector(
-                                    behavior: HitTestBehavior.opaque,
-                                    onTap: () {
-                                      setState(() => displayOverly = false);
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsetsDirectional.only(
-                                        top: 12.0,
-                                        start: 8.0,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          if (widget.decoration?.prefixIcon !=
-                                              null) ...[
-                                            widget.decoration!.prefixIcon!,
-                                            const SizedBox(width: 12),
+                              else
+                                if (onSearch &&
+                                    widget.searchType ==
+                                        _SearchType.onRequestData)
+                                  if (!widget.hideSelectedFieldWhenOpen)
+                                    _SearchField<T>.forRequestData(
+                                      items: widget.items,
+                                      searchHintText: widget.searchHintText,
+                                      onSearchTextChange: widget.onSearchTextChange,
+                                      onFutureRequestLoading: (val) {
+                                        setState(() {
+                                          isSearchRequestLoading = val;
+                                        });
+                                      },
+                                      futureRequest: widget.futureRequest,
+                                      futureRequestDelay:
+                                      widget.futureRequestDelay,
+                                      onSearchedItems: (val) {
+                                        setState(() => items = val);
+                                      },
+                                      mayFoundResult: (val) =>
+                                      mayFoundSearchRequestResult = val,
+                                      decoration:
+                                      decoration?.searchFieldDecoration,
+                                    )
+                                  else
+                                    GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
+                                      onTap: () {
+                                        setState(() => displayOverly = false);
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsetsDirectional.only(
+                                          top: 12.0,
+                                          start: 8.0,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            if (widget.decoration?.prefixIcon !=
+                                                null) ...[
+                                              widget.decoration!.prefixIcon!,
+                                              const SizedBox(width: 12),
+                                            ],
+                                            Expanded(
+                                              child:
+                                              _SearchField<T>.forRequestData(
+                                                items: widget.items,
+                                                searchHintText:
+                                                widget.searchHintText,
+                                                onSearchTextChange: widget.onSearchTextChange,
+                                                onFutureRequestLoading: (val) {
+                                                  setState(() {
+                                                    isSearchRequestLoading = val;
+                                                  });
+                                                },
+                                                futureRequest:
+                                                widget.futureRequest,
+                                                futureRequestDelay:
+                                                widget.futureRequestDelay,
+                                                onSearchedItems: (val) {
+                                                  setState(() => items = val);
+                                                },
+                                                mayFoundResult: (val) =>
+                                                mayFoundSearchRequestResult =
+                                                    val,
+                                                decoration: decoration
+                                                    ?.searchFieldDecoration,
+                                              ),
+                                            ),
+                                            decoration?.expandedSuffixIcon ??
+                                                _defaultOverlayIconUp,
+                                            const SizedBox(width: 14),
                                           ],
-                                          Expanded(
-                                            child:
-                                                _SearchField<T>.forRequestData(
-                                              items: widget.items,
-                                              searchHintText:
-                                                  widget.searchHintText,
-                                              onFutureRequestLoading: (val) {
-                                                setState(() {
-                                                  isSearchRequestLoading = val;
-                                                });
-                                              },
-                                              futureRequest:
-                                                  widget.futureRequest,
-                                              futureRequestDelay:
-                                                  widget.futureRequestDelay,
-                                              onSearchedItems: (val) {
-                                                setState(() => items = val);
-                                              },
-                                              mayFoundResult: (val) =>
-                                                  mayFoundSearchRequestResult =
-                                                      val,
-                                              decoration: decoration
-                                                  ?.searchFieldDecoration,
-                                            ),
-                                          ),
-                                          decoration?.expandedSuffixIcon ??
-                                              _defaultOverlayIconUp,
-                                          const SizedBox(width: 14),
-                                        ],
+                                        ),
                                       ),
                                     ),
-                                  ),
                               if (isSearchRequestLoading)
                                 widget.searchRequestLoadingIndicator ??
                                     const Padding(
@@ -549,8 +561,14 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
           GestureDetector(
             onTap: () => setState(() => displayOverly = false),
             child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height,
               color: Colors.transparent,
             ),
           ),
