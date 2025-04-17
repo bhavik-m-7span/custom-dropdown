@@ -116,6 +116,8 @@ class CustomDropdown<T> extends StatefulWidget {
   /// Default to "No result found.".
   final String? noResultFoundText;
 
+  final Widget? addNewItemWidget;
+
   /// Duration after which the [futureRequest] is to be executed.
   final Duration? futureRequestDelay;
 
@@ -198,6 +200,7 @@ class CustomDropdown<T> extends StatefulWidget {
     super.key,
     required this.items,
     required this.onChanged,
+    this.addNewItemWidget,
     this.controller,
     this.itemsScrollController,
     this.initialItem,
@@ -222,6 +225,7 @@ class CustomDropdown<T> extends StatefulWidget {
     this.enabled = true,
     this.disabledDecoration,
     this.onSearchTextChange,
+
   })
       : assert(
   initialItem == null || controller == null,
@@ -284,6 +288,7 @@ class CustomDropdown<T> extends StatefulWidget {
     this.disabledDecoration,
     this.closeDropDownOnClearFilterSearch = false,
     this.onSearchTextChange,
+    this.addNewItemWidget,
   })
       : assert(
   initialItem == null || controller == null,
@@ -345,6 +350,7 @@ class CustomDropdown<T> extends StatefulWidget {
     this.disabledDecoration,
     this.closeDropDownOnClearFilterSearch = false,
     this.onSearchTextChange,
+    this.addNewItemWidget,
   })
       : assert(
   initialItem == null || controller == null,
@@ -386,6 +392,7 @@ class CustomDropdown<T> extends StatefulWidget {
     this.enabled = true,
     this.disabledDecoration,
     this.onSearchTextChange,
+    this.addNewItemWidget,
   })
       : assert(
   initialItems == null || multiSelectController == null,
@@ -450,6 +457,7 @@ class CustomDropdown<T> extends StatefulWidget {
     this.disabledDecoration,
     this.closeDropDownOnClearFilterSearch = false,
     this.onSearchTextChange,
+    this.addNewItemWidget,
   })
       : assert(
   initialItems == null || multiSelectController == null,
@@ -513,6 +521,7 @@ class CustomDropdown<T> extends StatefulWidget {
     this.disabledDecoration,
     this.closeDropDownOnClearFilterSearch = false,
     this.onSearchTextChange,
+    this.addNewItemWidget,
   })
       : assert(
   initialItems == null || multiSelectController == null,
@@ -640,6 +649,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
               visibility: widget.visibility,
               overlay: (size, hideCallback) {
                 return _DropdownOverlay<T>(
+                  addNewItemWidget: widget.addNewItemWidget,
                   onItemSelect: (T value) {
                     switch (widget._dropdownType) {
                       case _DropdownType.singleSelect:
@@ -656,6 +666,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                   },
                   noResultFoundText:
                   widget.noResultFoundText ?? 'No result found.',
+
                   noResultFoundBuilder: widget.noResultFoundBuilder,
                   items: widget.items ?? [],
                   itemsScrollCtrl: widget.itemsScrollController,

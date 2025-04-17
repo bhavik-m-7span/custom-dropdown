@@ -31,6 +31,7 @@ class _DropdownOverlay<T> extends StatefulWidget {
   final TextStyle? hintStyle, headerStyle, noResultFoundStyle, listItemStyle;
   final EdgeInsets? headerPadding, listItemPadding, itemsListPadding;
   final Widget? searchRequestLoadingIndicator;
+  final Widget? addNewItemWidget;
   final _ListItemBuilder<T>? listItemBuilder;
   final _HeaderBuilder<T>? headerBuilder;
   final _HeaderListBuilder<T>? headerListBuilder;
@@ -77,6 +78,7 @@ class _DropdownOverlay<T> extends StatefulWidget {
     required this.headerListBuilder,
     required this.noResultFoundBuilder,
     required this.onSearchTextChange,
+    required this.addNewItemWidget,
   });
 
   @override
@@ -523,6 +525,8 @@ class _DropdownOverlayState<T> extends State<_DropdownOverlay<T>> {
                                         ),
                                       ),
                                     ),
+                              if(items.isNotEmpty)
+                                widget.addNewItemWidget ?? const SizedBox.shrink(),
                               if (isSearchRequestLoading)
                                 widget.searchRequestLoadingIndicator ??
                                     const Padding(
